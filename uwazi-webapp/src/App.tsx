@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -14,9 +14,40 @@ import {
   Textarea,
   Button,
   SimpleGrid,
+  Spinner,
 } from '@chakra-ui/react';
 
 function App() {
+  const [userText, setUserText] = useState('');
+  const [comparisonResults, setComparisonResults] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Choose the right backend URL
+  const backendURL =
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:8000'
+      : 'https://your-backend-url.onrender.com'; // ← Replace this with real URL
+
+  const handleCompare = async () => {
+    if (!userText.trim()) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${backendURL}/compare`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ article_text: userText }),
+      });
+      const data = await response.json();
+      setComparisonResults(data.similar_articles || []);
+    } catch (err) {
+      console.error('Error:', err);
+      setComparisonResults(['Error fetching comparison data.']);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ChakraProvider>
       <Box p={6}>
@@ -51,8 +82,30 @@ function App() {
             <TabPanel>
               <Heading size="md" mb={4}>Compare Articles</Heading>
               <Text mb={2}>Paste a news article or URL to compare different perspectives:</Text>
-              <Textarea placeholder="Paste article content or URL here..." mb={4} rows={6} />
-              <Button colorScheme="blue">Compare Perspectives</Button>
+              <Textarea
+                placeholder="Paste article content or URL here..."
+                mb={4}
+                rows={6}
+                value={userText}
+                onChange={(e) => setUserText(e.target.value)}
+              />
+              <Button colorScheme="blue" onClick={handleCompare} isDisabled={loading}>
+                {loading ? <Spinner size="sm" /> : 'Compare Perspectives'}
+              </Button>
+
+              {/* Results Section */}
+              {comparisonResults.length > 0 && (
+                <Box mt={6}>
+                  <Heading size="sm" mb={2}>Similar Articles:</Heading>
+                  <VStack align="start" spacing={3}>
+                    {comparisonResults.map((article, idx) => (
+                      <Box key={idx} p={3} border="1px solid #ccc" borderRadius="md">
+                        {article}
+                      </Box>
+                    ))}
+                  </VStack>
+                </Box>
+              )}
             </TabPanel>
 
             <TabPanel>
@@ -79,7 +132,14 @@ function App() {
             <TabPanel>
               <Heading size="md" mb={4}>Download Chrome Extension</Heading>
               <Text mb={2}>Click below to download the ZIP file of the Chrome extension:</Text>
-              <Button colorScheme="green">Download Extension</Button>
+              <Button
+                colorScheme="green"
+                onClick={() => {
+                  window.open('/extension/uwazi-extension.zip', '_blank');
+                }}
+              >
+                Download Extension
+              </Button>
             </TabPanel>
           </TabPanels>
         </Tabs>
