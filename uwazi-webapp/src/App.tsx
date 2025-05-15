@@ -1,25 +1,90 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  ChakraProvider,
+  Box,
+  Text,
+  Heading,
+  VStack,
+  HStack,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Textarea,
+  Button,
+  SimpleGrid,
+} from '@chakra-ui/react';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+      <Box p={6}>
+        <Heading mb={4}>Uwazi - Transparency in News</Heading>
+
+        {/* Language Side-by-Side */}
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} mb={10}>
+          <Box>
+            <Heading size="md">About Uwazi (English)</Heading>
+            <Text mt={2}>
+              Uwazi helps readers explore multiple perspectives of the same news story by comparing articles across various media houses.
+            </Text>
+          </Box>
+          <Box>
+            <Heading size="md">Kuhusu Uwazi (Kiswahili)</Heading>
+            <Text mt={2}>
+              Uwazi huwasaidia wasomaji kuchunguza mitazamo tofauti ya habari moja kwa kulinganisha makala kutoka vyombo mbalimbali vya habari.
+            </Text>
+          </Box>
+        </SimpleGrid>
+
+        {/* Tabs for navigation */}
+        <Tabs variant="enclosed" colorScheme="blue">
+          <TabList>
+            <Tab>Compare</Tab>
+            <Tab>How It Works</Tab>
+            <Tab>Technology</Tab>
+            <Tab>Download Extension</Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <Heading size="md" mb={4}>Compare Articles</Heading>
+              <Text mb={2}>Paste a news article or URL to compare different perspectives:</Text>
+              <Textarea placeholder="Paste article content or URL here..." mb={4} rows={6} />
+              <Button colorScheme="blue">Compare Perspectives</Button>
+            </TabPanel>
+
+            <TabPanel>
+              <Heading size="md" mb={4}>How It Works / Jinsi Inavyofanya Kazi</Heading>
+              <Text>
+                Uwazi uses natural language processing to extract keywords, retrieve related articles, and highlight semantic differences such as bias, tone, or fact framing.
+              </Text>
+              <Text mt={2}>
+                Uwazi hutumia teknolojia ya lugha asilia kuchambua maneno muhimu, kupata makala zinazohusiana, na kuonyesha tofauti katika muktadha na msimamo.
+              </Text>
+            </TabPanel>
+
+            <TabPanel>
+              <Heading size="md" mb={4}>Technology Used / Teknolojia</Heading>
+              <VStack align="start" spacing={2}>
+                <Text>• Python (spaCy, sentence-transformers)</Text>
+                <Text>• React + Chakra UI</Text>
+                <Text>• BeautifulSoup (scrapers)</Text>
+                <Text>• News APIs (Nation, Citizen, Al Jazeera, NYT)</Text>
+                <Text>• Kiswahili + English interface</Text>
+              </VStack>
+            </TabPanel>
+
+            <TabPanel>
+              <Heading size="md" mb={4}>Download Chrome Extension</Heading>
+              <Text mb={2}>Click below to download the ZIP file of the Chrome extension:</Text>
+              <Button colorScheme="green">Download Extension</Button>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Box>
+    </ChakraProvider>
   );
 }
 
